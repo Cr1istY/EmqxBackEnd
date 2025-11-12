@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"EmqxBackEnd/models"
+	"EmqxBackEnd/repository"
 	"EmqxBackEnd/service"
 	"net/http"
 
@@ -20,4 +21,14 @@ func ReceiveEmpx(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "saved"})
+}
+
+func GetMessages(c *gin.Context) {
+	msgType := c.Param("type")
+	messages, err := repository.GetMessages(msgType)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
+		return
+	}
+	c.JSON(http.StatusOK, messages)
 }
