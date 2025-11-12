@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"EmqxBackEnd/models"
+	"EmqxBackEnd/service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,5 +14,10 @@ func ReceiveEmpx(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+
+	if err := service.ProcessEmpxMessage(&msg); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "saved"})
 }
