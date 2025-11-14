@@ -10,5 +10,6 @@ func Setup() *gin.Engine {
 	r := gin.Default()
 	r.POST("/empx", handlers.ReceiveEmpx)
 	r.GET("/empx/:type", handlers.GetMessages)
+	r.POST("/admin/login", handlers.Login)
 	return r
 }
