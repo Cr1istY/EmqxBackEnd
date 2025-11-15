@@ -36,6 +36,12 @@ func CheckLogin(username, password string) bool {
 	if user.Password != password {
 		return false
 	}
+	id := user.ID
+	expiresAt := time.Now().Add(time.Hour * 24)
+	err = repository.UpdateExpiresAtTime(expiresAt, id)
+	if err != nil {
+		return false
+	}
 	return true
 }
 

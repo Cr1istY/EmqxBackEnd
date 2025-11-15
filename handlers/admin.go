@@ -23,8 +23,7 @@ func Login(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "登录失败"})
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "登录成功", "user": gin.H{
-			"username": msg.Username,
-			"token":    token,
+			"token": token,
 		}})
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "用户名或密码错误", "message": "登录失败"})

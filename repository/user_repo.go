@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"time"
 )
 
 func GetAdminByUser(username string) (*models.EmpxAdmin, error) {
@@ -35,6 +36,16 @@ func SaveToken(token string, id int) error {
 	_, err := database.DB.Exec(query, token, id)
 	if err != nil {
 		log.Println("Error saving token:", err)
+		return err
+	}
+	return err
+}
+
+func UpdateExpiresAtTime(expiresAt time.Time, id int) error {
+	query := `update public.admin set token_expires_at=$1 where id=$2`
+	_, err := database.DB.Exec(query, expiresAt, id)
+	if err != nil {
+		log.Println("Error saving expires_at:", err)
 		return err
 	}
 	return err
