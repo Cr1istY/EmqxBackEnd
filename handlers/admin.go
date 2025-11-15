@@ -15,7 +15,11 @@ func Login(c *gin.Context) {
 		return
 	}
 	if service.CheckLogin(msg.Username, msg.Password) {
-		c.JSON(http.StatusOK, gin.H{"message": "登录成功"})
+		token, err := service.GenerateToken(msg.Username)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "登录失败"})
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "登录成功", "token": token})
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "用户名或密码错误", "message": "登录失败"})
 	}
