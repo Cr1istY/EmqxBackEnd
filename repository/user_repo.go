@@ -29,3 +29,13 @@ func GetAdminByUser(username string) (*models.EmpxAdmin, error) {
 	return &admin, nil
 
 }
+
+func SaveToken(token string, id int) error {
+	query := `update public.admin set token=$1 where id=$2`
+	_, err := database.DB.Exec(query, token, id)
+	if err != nil {
+		log.Println("Error saving token:", err)
+		return err
+	}
+	return err
+}

@@ -19,6 +19,9 @@ func Login(c *gin.Context) {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "登录失败"})
 		}
+		if err := service.SaveToken(token, msg.ID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "登录失败"})
+		}
 		c.JSON(http.StatusOK, gin.H{"message": "登录成功", "user": gin.H{
 			"username": msg.Username,
 			"token":    token,

@@ -10,4 +10,5 @@ type EmpxAdmin struct {
 	Password    string    `json:"password" db:"password"`
 	Status      int8      `json:"status" db:"status"`
 	CreatedTime time.Time `json:"createdTime" db:"created_time"`
+	Token       string    `json:"token" db:"token"`
 }
