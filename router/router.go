@@ -14,10 +14,11 @@ func Setup() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.POST("/empx", handlers.ReceiveEmpx)
 	r.POST("/admin/login", handlers.Login)
-	protected := r.Group("/emqx/dashboard")
+	protected := r.Group("")
 	protected.Use(middleware.AuthMiddlewareWithCache())
 	{
-		protected.GET("/:type", handlers.GetMessages)
+		protected.GET("/admin/getinfo", handlers.GetAdminByAuth)
+		protected.GET("/emqx/:type", handlers.GetMessages)
 	}
 
 	return r

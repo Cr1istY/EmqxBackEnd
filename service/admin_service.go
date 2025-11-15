@@ -21,28 +21,28 @@ func GenerateToken(username string) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
-func CheckLogin(username, password string) bool {
+func CheckLogin(username, password string) (int, bool) {
 	var user *models.EmpxAdmin
 	user, err := repository.GetAdminByUser(username)
 	if err != nil {
-		return false
+		return -1, false
 	}
 	if user == nil {
-		return false
+		return -1, false
 	}
 	if user.Status != 1 {
-		return false
+		return -1, false
 	}
 	if user.Password != password {
-		return false
+		return -1, false
 	}
 	id := user.ID
 	expiresAt := time.Now().Add(time.Hour * 24)
 	err = repository.UpdateExpiresAtTime(expiresAt, id)
 	if err != nil {
-		return false
+		return -1, false
 	}
-	return true
+	return user.ID, true
 }
 
 func SaveToken(token string, id int) error {
