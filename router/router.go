@@ -2,14 +2,24 @@ package router
 
 import (
 	"EmqxBackEnd/handlers"
+	"EmqxBackEnd/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Setup() *gin.Engine {
 	r := gin.Default()
+
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
 	r.POST("/empx", handlers.ReceiveEmpx)
-	r.GET("/empx/:type", handlers.GetMessages)
 	r.POST("/admin/login", handlers.Login)
+	protected := r.Group("")
+	protected.Use(middleware.AuthMiddlewareWithCache())
+	{
+		protected.GET("/admin/getinfo", handlers.GetAdminByAuth)
+		protected.GET("/emqx/:type", handlers.GetMessages)
+	}
+
 	return r
 }

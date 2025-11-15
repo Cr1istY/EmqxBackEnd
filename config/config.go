@@ -1,6 +1,6 @@
 package config
 
 var DBConnStr = "postgres://" +
-	"admin" + ":" + "root" +
+	"root" + ":" + "root" +
 	"@" + "localhost" + ":" + "5432" +
 	"/" + "postgres" + "?sslmode=disable"
