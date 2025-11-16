@@ -21,6 +21,14 @@ func GenerateToken(username string) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
+func CreateAdmin(username, password string) (time.Time, error) {
+	createdTime, err := repository.CreateAdmin(username, password)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return createdTime, nil
+}
+
 func CheckLogin(username, password string) (int, bool) {
 	var user *models.EmpxAdmin
 	user, err := repository.GetAdminByUser(username)

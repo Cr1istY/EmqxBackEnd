@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// GetAdminByUser 获取用户
 func GetAdminByUser(username string) (*models.EmpxAdmin, error) {
 	query := `SELECT id, username, password, status, created_time FROM public.admin WHERE username = $1`
 	var admin models.EmpxAdmin
@@ -31,6 +32,22 @@ func GetAdminByUser(username string) (*models.EmpxAdmin, error) {
 
 }
 
+// CreateAdmin 创建用户
+func CreateAdmin(username, password string) (time.Time, error) {
+	if username == "" || password == "" {
+		return time.Time{}, errors.New("username or password cannot be empty")
+	}
+	createdTime := time.Now()
+	status := 1
+	query := `insert into public.admin (username, password, status, created_time) values ($1, $2, $3, $4)`
+	_, err := database.DB.Exec(query, username, password, status, createdTime)
+	if err != nil {
+		return createdTime, err
+	}
+	return createdTime, nil
+}
+
+// SaveToken 保存token
 func SaveToken(token string, id int) error {
 	query := `update public.admin set token=$1 where id=$2`
 	_, err := database.DB.Exec(query, token, id)
@@ -41,6 +58,7 @@ func SaveToken(token string, id int) error {
 	return err
 }
 
+// UpdateExpiresAtTime 更新token过期时间
 func UpdateExpiresAtTime(expiresAt time.Time, id int) error {
 	query := `update public.admin set token_expires_at=$1 where id=$2`
 	_, err := database.DB.Exec(query, expiresAt, id)
