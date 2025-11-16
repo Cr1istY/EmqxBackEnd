@@ -31,6 +31,26 @@ func Login(c *gin.Context) {
 	}
 }
 
+func Register(c *gin.Context) {
+	var msg models.EmpxAdmin
+	if err := c.ShouldBindJSON(&msg); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if msg.Username == "" || msg.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "用户名或密码不能为空"})
+		return
+	}
+	createdTime, err := service.CreateAdmin(msg.Username, msg.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "注册失败"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"message": "注册成功", "user": gin.H{
+			"created_time": createdTime,
+		}})
+	}
+}
+
 func GetAdminByAuth(c *gin.Context) {
 	id, exists := c.Get("admin_id")
 	if !exists {
