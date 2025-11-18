@@ -18,9 +18,8 @@ func Setup() *gin.Engine {
 	protected.Use(middleware.AuthMiddlewareWithCache())
 	{
 		protected.GET("/admin/getinfo", handlers.GetAdminByAuth)
-		protected.GET("/emqx/:type", handlers.GetMessages)
+		protected.POST("/empx/getNodeMessage", handlers.GetMessages)
 		protected.POST("/admin/register", handlers.Register)
 	}
-
 	return r
 }

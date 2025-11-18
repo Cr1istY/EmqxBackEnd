@@ -10,16 +10,17 @@ import (
 // SaveMessage 保存消息
 func SaveMessage(msg *models.EmpxMessage) error {
 	// 注意 postgres sql 插入时，表要标明在哪个域（public）内
-	query := `INSERT INTO public.packets (node_id, type, message, received_at) VALUES ($1, $2, $3, $4)`
+	query := `INSERT INTO public.message (node_id, type, message, received_at) VALUES ($1, $2, $3, $4)`
 	_, err := database.DB.Exec(query, msg.NodeID, msg.Type, msg.Value, msg.TS)
 	return err
 }
 
 // GetMessages 读取数据库
-func GetMessages(msgType string) ([]models.EmpxMessage, error) {
-	query := `SELECT node_id, type, message, received_at FROM public.packets WHERE type = $1`
-	rows, err := database.DB.Query(query, msgType)
+func GetMessages(msgType, userId int) ([]models.EmpxMessage, error) {
+	query := `SELECT node_id, type, message, received_at FROM public.message WHERE type = $1 AND user_id = $2`
+	rows, err := database.DB.Query(query, msgType, userId)
 	if err != nil {
+		log.Printf("database.DB.Query() failed: %v", err)
 		return nil, err
 	}
 	defer func(rows *sql.Rows) {
