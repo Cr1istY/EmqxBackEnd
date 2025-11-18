@@ -24,8 +24,12 @@ func ReceiveEmpx(c *gin.Context) {
 }
 
 func GetMessages(c *gin.Context) {
-	msgType := c.Param("type")
-	messages, err := repository.GetMessages(msgType)
+	var msg models.GetMessage
+	if err := c.ShouldBindJSON(&msg); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	messages, err := repository.GetMessages(msg.Type, msg.UserId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
 		return

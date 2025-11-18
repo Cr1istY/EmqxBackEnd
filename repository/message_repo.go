@@ -16,10 +16,11 @@ func SaveMessage(msg *models.EmpxMessage) error {
 }
 
 // GetMessages 读取数据库
-func GetMessages(msgType string) ([]models.EmpxMessage, error) {
-	query := `SELECT node_id, type, message, received_at FROM public.packets WHERE type = $1`
-	rows, err := database.DB.Query(query, msgType)
+func GetMessages(msgType, userId int) ([]models.EmpxMessage, error) {
+	query := `SELECT node_id, type, message, received_at FROM public.message WHERE type = $1 AND user_id = $2`
+	rows, err := database.DB.Query(query, msgType, userId)
 	if err != nil {
+		log.Printf("database.DB.Query() failed: %v", err)
 		return nil, err
 	}
 	defer func(rows *sql.Rows) {
