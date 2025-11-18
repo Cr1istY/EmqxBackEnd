@@ -21,6 +21,5 @@ func Setup() *gin.Engine {
 		protected.POST("/empx/getNodeMessage", handlers.GetMessages)
 		protected.POST("/admin/register", handlers.Register)
 	}
-
 	return r
 }
