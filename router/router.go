@@ -20,6 +20,7 @@ func Setup() *gin.Engine {
 		protected.GET("/admin/getinfo", handlers.GetAdminByAuth)
 		protected.POST("/empx/getNodeMessage", handlers.GetMessages)
 		protected.POST("/admin/register", handlers.Register)
+		protected.POST("/admin/saveNode", handlers.SaveNode)
 	}
 	return r
 }
