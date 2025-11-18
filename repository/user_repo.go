@@ -68,3 +68,15 @@ func UpdateExpiresAtTime(expiresAt time.Time, id int) error {
 	}
 	return err
 }
+
+// GetToken 获取token
+func GetToken(id int) (string, error) {
+	query := `select token from public.admin where id=$1`
+	var token string
+	err := database.DB.QueryRow(query, id).Scan(&token)
+	if err != nil {
+		log.Println("Error querying token:", err)
+		return "", err
+	}
+	return token, nil
+}
