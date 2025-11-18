@@ -12,7 +12,7 @@ func Setup() *gin.Engine {
 
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.POST("/empx", handlers.ReceiveEmpx)
+	r.POST("/empx/saveMessage", handlers.ReceiveEmpx)
 	r.POST("/admin/login", handlers.Login)
 	protected := r.Group("")
 	protected.Use(middleware.AuthMiddlewareWithCache())
@@ -20,6 +20,7 @@ func Setup() *gin.Engine {
 		protected.GET("/admin/getinfo", handlers.GetAdminByAuth)
 		protected.POST("/empx/getNodeMessage", handlers.GetMessages)
 		protected.POST("/admin/register", handlers.Register)
+		protected.POST("/admin/saveNode", handlers.SaveNode)
 	}
 	return r
 }

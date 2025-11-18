@@ -7,6 +7,7 @@ type EmpxMessage struct {
 	Type   string    `json:"type" db:"type"`
 	Value  string    `json:"value" db:"message"`
 	TS     time.Time `json:"ts" db:"received_at"`
+	UserId int       `json:"userId" db:"user_id"`
 }
 
 type GetMessage struct {

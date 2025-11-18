@@ -10,8 +10,8 @@ import (
 // SaveMessage 保存消息
 func SaveMessage(msg *models.EmpxMessage) error {
 	// 注意 postgres sql 插入时，表要标明在哪个域（public）内
-	query := `INSERT INTO public.message (node_id, type, message, received_at) VALUES ($1, $2, $3, $4)`
-	_, err := database.DB.Exec(query, msg.NodeID, msg.Type, msg.Value, msg.TS)
+	query := `INSERT INTO public.message (node_id, type, message, received_at, user_id) VALUES ($1, $2, $3, $4, $5)`
+	_, err := database.DB.Exec(query, msg.NodeID, msg.Type, msg.Value, msg.TS, msg.UserId)
 	return err
 }
 
