@@ -15,6 +15,9 @@ func Login(c *gin.Context) {
 		return
 	}
 	id, isRight := service.CheckLogin(msg.Username, msg.Password)
+	if id == -1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "用户不存在或已被禁止", "message": "登录失败"})
+	}
 	if isRight {
 		token, err := service.GenerateToken(msg.Username)
 		if err != nil {
