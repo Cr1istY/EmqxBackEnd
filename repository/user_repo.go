@@ -63,9 +63,10 @@ func UpdateExpiresAtTime(expiresAt time.Time, id int) error {
 	query := `update public.admin set token_expires_at=$1 where id=$2`
 	_, err := database.DB.Exec(query, expiresAt, id)
 	if err != nil {
-		log.Println("Error saving expires_at:", err)
+		log.Println("Error updating expires at time:", err)
 		return err
 	}
+
 	return err
 }
 

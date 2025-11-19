@@ -55,9 +55,9 @@ func Register(c *gin.Context) {
 }
 
 func GetAdminByAuth(c *gin.Context) {
-	id, exists := c.Get("admin_id")
+	id, exists := c.Get("adminId")
 	if !exists {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "用户不存在"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "用户未登陆"})
 		return
 	}
 	username, exists := c.Get("username")
@@ -65,7 +65,7 @@ func GetAdminByAuth(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "用户不存在"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"admin": gin.H{
+	c.JSON(http.StatusOK, gin.H{"user": gin.H{
 		"id":       id,
 		"username": username,
 	}})

@@ -92,7 +92,7 @@ func AuthMiddlewareWithCache() gin.HandlerFunc {
 		}
 		cache.mu.Unlock()
 
-		c.Set("admin_id", admin.ID)
+		c.Set("adminId", admin.ID)
 		c.Set("username", admin.Username)
 		c.Next()
 	}
