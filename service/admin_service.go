@@ -64,3 +64,20 @@ func ChangeUserStatus(id int, status int8) error {
 func GetAllUsers() ([]models.EmpxAdmin, error) {
 	return repository.GetAllUsers()
 }
+
+func IsAdmin(token string) bool {
+	var user *models.EmpxAdmin
+	user, err := repository.GetAdminByUser("admin")
+	if err != nil {
+		return false
+	}
+	if user == nil {
+		return false
+	}
+	// 2为超级管理员
+	tokenAdmin, err := repository.GetToken(user.ID)
+	if err != nil {
+		return false
+	}
+	return token == tokenAdmin
+}

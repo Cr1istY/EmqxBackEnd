@@ -72,6 +72,11 @@ func GetAdminByAuth(c *gin.Context) {
 }
 
 func ChangeUserStatus(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	if service.IsAdmin(token) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "用户权限不足"})
+		return
+	}
 	var msg models.EmpxAdmin
 	if err := c.ShouldBindJSON(&msg); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -88,6 +93,13 @@ func ChangeUserStatus(c *gin.Context) {
 }
 
 func GetAllUsers(c *gin.Context) {
+	// 先对用户进行身份验证
+	// 只有status==2时，才可以获取其他用户并修改
+	token := c.GetHeader("Authorization")
+	if service.IsAdmin(token) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "用户权限不足"})
+		return
+	}
 	users, err := service.GetAllUsers()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
