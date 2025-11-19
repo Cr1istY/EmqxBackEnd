@@ -92,8 +92,8 @@ func ChangeUserStatus(id int, status int8) error {
 	return err
 }
 
-func GetAllUsers() ([]models.EmpxAdmin, error) {
-	query := `select id, username, status, from public.admin`
+func GetAllUsers() ([]models.GetEmpxAdmin, error) {
+	query := `select id, username, status from public.admin`
 	rows, err := database.DB.Query(query)
 	if err != nil {
 		log.Println("Error querying all users:", err)
@@ -106,13 +106,16 @@ func GetAllUsers() ([]models.EmpxAdmin, error) {
 		}
 	}(rows)
 
-	var users []models.EmpxAdmin
+	var users []models.GetEmpxAdmin
 	for rows.Next() {
-		var user models.EmpxAdmin
+		var user models.GetEmpxAdmin
 		err := rows.Scan(&user.ID, &user.Username, &user.Status)
 		if err != nil {
 			log.Println("Error scanning user:", err)
 			continue
+		}
+		if user.ID == 1 {
+			break
 		}
 		users = append(users, user)
 	}

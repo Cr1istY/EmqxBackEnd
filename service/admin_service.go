@@ -61,7 +61,7 @@ func ChangeUserStatus(id int, status int8) error {
 	return repository.ChangeUserStatus(id, status)
 }
 
-func GetAllUsers() ([]models.EmpxAdmin, error) {
+func GetAllUsers() ([]models.GetEmpxAdmin, error) {
 	return repository.GetAllUsers()
 }
 
