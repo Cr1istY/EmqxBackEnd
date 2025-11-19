@@ -81,3 +81,13 @@ func GetToken(id int) (string, error) {
 	}
 	return token, nil
 }
+
+// ChangeUserStatus 切换用户状态
+func ChangeUserStatus(id int, status int8) error {
+	query := `update public.admin set status=$1 where id=$2`
+	_, err := database.DB.Exec(query, status, id)
+	if err != nil {
+		log.Println("Error changing user status:", err)
+	}
+	return err
+}

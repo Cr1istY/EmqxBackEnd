@@ -56,3 +56,7 @@ func CheckLogin(username, password string) (int, bool) {
 func SaveToken(token string, id int) error {
 	return repository.SaveToken(token, id)
 }
+
+func ChangeUserStatus(id int, status int8) error {
+	return repository.ChangeUserStatus(id, status)
+}

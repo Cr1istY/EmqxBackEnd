@@ -70,3 +70,19 @@ func GetAdminByAuth(c *gin.Context) {
 		"username": username,
 	}})
 }
+
+func ChangeUserStatus(c *gin.Context) {
+	var msg models.EmpxAdmin
+	if err := c.ShouldBindJSON(&msg); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	if msg.Status != 0 && msg.Status != 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "状态码错误"})
+		return
+	}
+	if err := service.ChangeUserStatus(msg.ID, msg.Status); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"message": "修改成功"})
+	}
+}
