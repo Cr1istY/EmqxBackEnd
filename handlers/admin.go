@@ -86,3 +86,12 @@ func ChangeUserStatus(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "修改成功"})
 	}
 }
+
+func GetAllUsers(c *gin.Context) {
+	users, err := service.GetAllUsers()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"users": users})
+	}
+}

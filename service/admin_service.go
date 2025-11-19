@@ -60,3 +60,7 @@ func SaveToken(token string, id int) error {
 func ChangeUserStatus(id int, status int8) error {
 	return repository.ChangeUserStatus(id, status)
 }
+
+func GetAllUsers() ([]models.EmpxAdmin, error) {
+	return repository.GetAllUsers()
+}

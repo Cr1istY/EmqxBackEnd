@@ -91,3 +91,31 @@ func ChangeUserStatus(id int, status int8) error {
 	}
 	return err
 }
+
+func GetAllUsers() ([]models.EmpxAdmin, error) {
+	query := `select id, username, status, from public.admin`
+	rows, err := database.DB.Query(query)
+	if err != nil {
+		log.Println("Error querying all users:", err)
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Println("Error closing rows:", err)
+		}
+	}(rows)
+
+	var users []models.EmpxAdmin
+	for rows.Next() {
+		var user models.EmpxAdmin
+		err := rows.Scan(&user.ID, &user.Username, &user.Status)
+		if err != nil {
+			log.Println("Error scanning user:", err)
+			continue
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
