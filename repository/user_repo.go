@@ -115,7 +115,7 @@ func GetAllUsers() ([]models.GetEmpxAdmin, error) {
 			continue
 		}
 		if user.ID == 1 {
-			break
+			continue
 		}
 		users = append(users, user)
 	}

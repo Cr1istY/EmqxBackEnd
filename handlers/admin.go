@@ -17,14 +17,17 @@ func Login(c *gin.Context) {
 	id, isRight := service.CheckLogin(msg.Username, msg.Password)
 	if id == -1 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "用户不存在或已被禁止", "message": "登录失败"})
+		return
 	}
 	if isRight {
 		token, err := service.GenerateToken(msg.Username)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "登录失败"})
+			return
 		}
 		if err := service.SaveToken(token, id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "登录失败"})
+			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "登录成功", "user": gin.H{
 			"token": token,
