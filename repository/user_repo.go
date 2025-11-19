@@ -81,3 +81,44 @@ func GetToken(id int) (string, error) {
 	}
 	return token, nil
 }
+
+// ChangeUserStatus 切换用户状态
+func ChangeUserStatus(id int, status int8) error {
+	query := `update public.admin set status=$1 where id=$2`
+	_, err := database.DB.Exec(query, status, id)
+	if err != nil {
+		log.Println("Error changing user status:", err)
+	}
+	return err
+}
+
+func GetAllUsers() ([]models.GetEmpxAdmin, error) {
+	query := `select id, username, status from public.admin`
+	rows, err := database.DB.Query(query)
+	if err != nil {
+		log.Println("Error querying all users:", err)
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Println("Error closing rows:", err)
+		}
+	}(rows)
+
+	var users []models.GetEmpxAdmin
+	for rows.Next() {
+		var user models.GetEmpxAdmin
+		err := rows.Scan(&user.ID, &user.Username, &user.Status)
+		if err != nil {
+			log.Println("Error scanning user:", err)
+			continue
+		}
+		if user.ID == 1 {
+			continue
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}

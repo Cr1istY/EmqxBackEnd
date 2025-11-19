@@ -13,3 +13,9 @@ type EmpxAdmin struct {
 	Token          string    `json:"token" db:"token"`
 	TokenExpiresAt time.Time `json:"tokenExpiresAt" db:"token_expires_at"`
 }
+
+type GetEmpxAdmin struct {
+	ID       int    `json:"id" db:"id"`
+	Username string `json:"username" db:"username"`
+	Status   int8   `json:"status" db:"status"`
+}
