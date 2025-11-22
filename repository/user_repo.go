@@ -122,3 +122,14 @@ func GetAllUsers() ([]models.GetEmpxAdmin, error) {
 
 	return users, nil
 }
+
+func GetUserIdByToken(token string) (int, error) {
+	query := `select id from public.admin where token=$1`
+	var id int
+	err := database.DB.QueryRow(query, token).Scan(&id)
+	if err != nil {
+		log.Println("Error querying user id:", err)
+		return -1, err
+	}
+	return id, nil
+}

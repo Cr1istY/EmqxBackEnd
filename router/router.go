@@ -18,11 +18,13 @@ func Setup() *gin.Engine {
 	protected.Use(middleware.AuthMiddlewareWithCache())
 	{
 		protected.GET("/admin/getinfo", handlers.GetAdminByAuth)
-		protected.POST("/empx/getNodeMessage", handlers.GetMessages)
+		// protected.GET("/empx/getNodeMessage", handlers.GetMessages)
+		protected.GET("/empx/getMessage/:type", handlers.GetMessages)
 		protected.POST("/admin/register", handlers.Register)
 		protected.POST("/admin/saveNode", handlers.SaveNode)
 		protected.POST("/admin/changeUserStatus", handlers.ChangeUserStatus)
 		protected.GET("/admin/getAllUser", handlers.GetAllUsers)
+		protected.GET("/admin/getAllNode", handlers.GetAllNodeByUserId)
 	}
 	return r
 }

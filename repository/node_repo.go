@@ -2,6 +2,8 @@ package repository
 
 import (
 	"EmqxBackEnd/database"
+	"EmqxBackEnd/models"
+	"database/sql"
 	"log"
 )
 
@@ -39,4 +41,45 @@ func CheckNode(nodeId int) (bool, error) {
 		return false, err
 	}
 	return exists, nil
+}
+
+func GetAllNodeByUserId(userId int) ([]models.Node, error) {
+	var query string
+	var rows *sql.Rows
+	var err error
+	if userId == 1 {
+		query = `select id from public.node`
+		rows, err = database.DB.Query(query)
+	} else {
+		query = `select id from public.node where user_id=$1`
+		rows, err = database.DB.Query(query, userId)
+	}
+
+	if err != nil {
+		log.Println("GetAllNodeByUserId error:", err)
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Println("Error closing rows in GetAllNodeByUserId:", err)
+			return
+		}
+	}(rows)
+	var nodes []models.Node
+	for rows.Next() {
+		var node models.Node
+		err := rows.Scan(&node.ID)
+		if err != nil {
+			log.Println("GetAllNodeByUserId error:", err)
+			return nil, err
+		}
+		err = rows.Scan(&node.UserId)
+		if err != nil {
+			log.Println("GetAllNodeByUserId error:", err)
+			return nil, err
+		}
+		nodes = append(nodes, node)
+	}
+	return nodes, nil
 }
