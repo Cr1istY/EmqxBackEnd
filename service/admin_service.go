@@ -81,3 +81,15 @@ func IsAdmin(token string) bool {
 	}
 	return token == tokenAdmin
 }
+
+func GetUserIdByToken(token string) (int, error) {
+	id, err := repository.GetUserIdByToken(token)
+	if err != nil {
+		return -1, err
+	}
+	return id, nil
+}
+
+func GetAllNodeByUserId(id int) ([]models.Node, error) {
+	return repository.GetAllNodeByUserId(id)
+}

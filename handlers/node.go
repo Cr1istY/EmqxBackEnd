@@ -20,3 +20,18 @@ func SaveNode(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "保存成功", "nodeId": nodemsg.ID})
 }
+
+func GetAllNodeByUserId(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	userId, err := service.GetUserIdByToken(token)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	nodes, err := service.GetAllNodeByUserId(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"nodes": nodes})
+	}
+}

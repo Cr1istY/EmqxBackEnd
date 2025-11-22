@@ -5,6 +5,7 @@ import (
 	"EmqxBackEnd/repository"
 	"EmqxBackEnd/service"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,25 +25,27 @@ func ReceiveEmpx(c *gin.Context) {
 }
 
 func GetMessages(c *gin.Context) {
-	var msg models.GetMessage
-	if err := c.ShouldBindJSON(&msg); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
 	// 取出当前用户的token，与用户的id的token进行对比
 	token := c.GetHeader("Authorization")
-	userToken, err := repository.GetToken(msg.UserId)
+	messageType := c.Param("type")
+	userId, err := repository.GetUserIdByToken(token)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get token"})
 		return
 	}
-	if token != userToken {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+	messageTypeId, err := strconv.ParseInt(messageType, 10, 32)
+	if err != nil {
+		// Handle conversion error
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid type parameter"})
 		return
 	}
-	messages, err := repository.GetMessages(msg.Type, msg.UserId)
+	messages, err := repository.GetMessages(int(messageTypeId), userId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
+		return
+	}
+	if len(messages) == 0 {
+		c.JSON(http.StatusOK, gin.H{"messages": []models.EmpxMessage{}})
 		return
 	}
 	c.JSON(http.StatusOK, messages)

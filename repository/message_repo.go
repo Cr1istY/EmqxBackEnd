@@ -16,9 +16,9 @@ func SaveMessage(msg *models.EmpxMessage) error {
 }
 
 // GetMessages 读取数据库
-func GetMessages(msgType, userId int) ([]models.EmpxMessage, error) {
-	query := `SELECT node_id, type, message, received_at FROM public.message WHERE type = $1 AND user_id = $2`
-	rows, err := database.DB.Query(query, msgType, userId)
+func GetMessages(messageType, userId int) ([]models.EmpxMessage, error) {
+	query := `SELECT node_id, message, received_at FROM public.message WHERE type = $1 AND user_id = $2`
+	rows, err := database.DB.Query(query, messageType, userId)
 	if err != nil {
 		log.Printf("database.DB.Query() failed: %v", err)
 		return nil, err
@@ -27,13 +27,15 @@ func GetMessages(msgType, userId int) ([]models.EmpxMessage, error) {
 		err := rows.Close()
 		if err != nil {
 			log.Printf("rows.Close() failed: %v", err)
+			return
 		}
 	}(rows)
 	var messages []models.EmpxMessage
 	for rows.Next() {
 		var msg models.EmpxMessage
-		err := rows.Scan(&msg.NodeID, &msg.Type, &msg.Value, &msg.TS)
+		err := rows.Scan(&msg.NodeID, &msg.Value, &msg.TS)
 		if err != nil {
+			log.Println("rows.Scan() failed: " + err.Error())
 			return nil, err
 		}
 		messages = append(messages, msg)
