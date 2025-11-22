@@ -27,13 +27,15 @@ func GetMessages(messageType, userId int) ([]models.EmpxMessage, error) {
 		err := rows.Close()
 		if err != nil {
 			log.Printf("rows.Close() failed: %v", err)
+			return
 		}
 	}(rows)
 	var messages []models.EmpxMessage
 	for rows.Next() {
 		var msg models.EmpxMessage
-		err := rows.Scan(&msg.NodeID, &msg.Type, &msg.Value, &msg.TS)
+		err := rows.Scan(&msg.NodeID, &msg.Value, &msg.TS)
 		if err != nil {
+			log.Println("rows.Scan() failed: " + err.Error())
 			return nil, err
 		}
 		messages = append(messages, msg)
