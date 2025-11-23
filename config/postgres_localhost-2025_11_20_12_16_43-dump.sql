@@ -161,40 +161,58 @@ ALTER TABLE ONLY public.node ALTER COLUMN id SET DEFAULT nextval('public.node_id
 -- Data for Name: admin; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.admin (id, username, password, status, token, token_expires_at, token_created_at, created_time, update_time, is_deleted) FROM stdin;
-7	root	admin	1	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjM2NDkxNDcsInVzZXJuYW1lIjoicm9vdCJ9.WmPb-dKyrsWBBEDRAYg1m6V2b5cs6pEq-tJFA8KjK30	2025-11-20 22:32:27.459736	2025-11-18 12:31:35.181198	2025-11-18 12:31:35.179963	2025-11-18 12:31:44.829786	f
-5	赫连国辉	aLY6WX_3VlTiDCl	1	\N	\N	2025-11-18 11:07:46.575156	2025-11-18 11:07:46.574745	2025-11-18 11:07:46.575156	f
-2	羊子豪	c1Bzhd4XYvEsgSf	1	\N	\N	2025-11-18 00:27:22.88082	2025-11-18 00:27:22.880081	2025-11-18 00:27:22.88082	f
-6	许若汐	iRFhjDfPd9SIeeZ	1	\N	\N	2025-11-18 11:09:03.935339	2025-11-18 11:09:03.934184	2025-11-18 11:09:03.935339	f
-3	闾榕融	WvNQ0FwONvMlLOf	1	\N	\N	2025-11-18 10:56:49.615499	2025-11-18 10:56:49.615274	2025-11-18 10:56:49.615499	f
-1	admin	admin	1	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjM2OTcyOTMsInVzZXJuYW1lIjoiYWRtaW4ifQ._y5NcTiQ-3vYZdiAfJmUD81wisgRBJy82lpVw6NKpjI	2025-11-21 11:54:53.687216	2025-11-17 16:24:25.596921	2025-11-17 16:24:25.596921	2025-11-18 00:26:40.457763	f
-\.
+INSERT INTO public.admin
+(id, username, password, status, token, token_expires_at, token_created_at, created_time, update_time, is_deleted)
+VALUES
+    (7, 'root', 'admin', 1,
+     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjM2NDkxNDcsInVzZXJuYW1lIjoicm9vdCJ9.WmPb-dKyrsWBBEDRAYg1m6V2b5cs6pEq-tJFA8KjK30',
+     '2025-11-20 22:32:27.459736', '2025-11-18 12:31:35.181198',
+     '2025-11-18 12:31:35.179963', '2025-11-18 12:31:44.829786', false),
+
+    (5, '赫连国辉', 'aLY6WX_3VlTiDCl', 1,
+     NULL, NULL, '2025-11-18 11:07:46.575156',
+     '2025-11-18 11:07:46.574745', '2025-11-18 11:07:46.575156', false),
+
+    (2, '羊子豪', 'c1Bzhd4XYvEsgSf', 1,
+     NULL, NULL, '2025-11-18 00:27:22.88082',
+     '2025-11-18 00:27:22.880081', '2025-11-18 00:27:22.88082', false),
+
+    (6, '许若汐', 'iRFhjDfPd9SIeeZ', 1,
+     NULL, NULL, '2025-11-18 11:09:03.935339',
+     '2025-11-18 11:09:03.934184', '2025-11-18 11:09:03.935339', false),
+
+    (3, '闾榕融', 'WvNQ0FwONvMlLOf', 1,
+     NULL, NULL, '2025-11-18 10:56:49.615499',
+     '2025-11-18 10:56:49.615274', '2025-11-18 10:56:49.615499', false),
+
+    (1, 'admin', 'admin', 1,
+     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjM2OTcyOTMsInVzZXJuYW1lIjoiYWRtaW4ifQ._y5NcTiQ-3vYZdiAfJmUD81wisgRBJy82lpVw6NKpjI',
+     '2025-11-21 11:54:53.687216', '2025-11-17 16:24:25.596921',
+     '2025-11-17 16:24:25.596921', '2025-11-18 00:26:40.457763', false);
 
 
 --
 -- Data for Name: message; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.message (id, node_id, type, received_at, user_id, message) FROM stdin;
-1	0	3	2025-11-18 03:07:08.404684	1	23.6                                
-2	0	3	2025-11-18 03:22:33.045693	1	15.3                                
-3	1	5	2025-11-18 17:03:12.67259	1	8.39                                
-4	1	5	2025-11-18 17:04:03.657486	1	-29.95                              
-5	1	3	2025-11-18 17:04:47.692341	1	-23.72                              
-\.
+INSERT INTO public.message (id, node_id, type, received_at, user_id, message) VALUES
+                                                                                  (1, 0, 3, '2025-11-18 03:07:08.404684', 1, '23.6'),
+                                                                                  (2, 0, 3, '2025-11-18 03:22:33.045693', 1, '15.3'),
+                                                                                  (3, 1, 5, '2025-11-18 17:03:12.67259',  1, '8.39'),
+                                                                                  (4, 1, 5, '2025-11-18 17:04:03.657486', 1, '-29.95'),
+                                                                                  (5, 1, 3, '2025-11-18 17:04:47.692341', 1, '-23.72');
 
 
 --
 -- Data for Name: node; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.node (id, user_id) FROM stdin;
-0	1
-1	1
-2	1
-13	7
-12	1
-\.
+INSERT INTO public.node (id, user_id) VALUES
+                                          (0, 1),
+                                          (1, 1),
+                                          (2, 1),
+                                          (13, 7),
+                                          (12, 1);
 
 
 --
