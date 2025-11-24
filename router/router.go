@@ -26,5 +26,11 @@ func Setup() *gin.Engine {
 		protected.GET("/admin/getAllUser", handlers.GetAllUsers)
 		protected.GET("/admin/getAllNode", handlers.GetAllNodeByUserId)
 	}
+	taskGroup := r.Group("/api/tasks")
+	{
+		taskGroup.GET("", handlers.GetTasksHandler)                      // 获取任务列表
+		taskGroup.PUT("/:name/cron", handlers.UpdateTaskCronHandler)     // 更新Cron表达式
+		taskGroup.PUT("/:name/status", handlers.UpdateTaskStatusHandler) // 启用/禁用任务
+	}
 	return r
 }
