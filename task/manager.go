@@ -53,6 +53,8 @@ func (tm *Manager) RegisterTask(desc string, fn models.TaskFunc) {
 		name = "email_task"
 	case desc == "数据同步":
 		name = "sync_data"
+	case desc == "temp_sensor":
+		name = "temp_sensor"
 	default:
 		name = "unknown_task"
 	}

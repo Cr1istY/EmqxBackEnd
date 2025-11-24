@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	mqttBroker := "mqtt://172.20.10.5"
+	mqttBroker := "mqtt://172.20.10.5:1883"
 	mqttUser := ""
 	mqttPass := ""
 	if err := mqtt.InitClient(mqttBroker, "cron_task_client", mqttUser, mqttPass); err != nil {
@@ -35,7 +35,7 @@ func main() {
 	}(db)
 
 	taskMgr := task.NewManager(db)
-	taskMgr.RegisterTask("Mqtt发布", jobs.MqttPublishTask)
+	taskMgr.RegisterTask("temp_sensor", jobs.MqttPublishTask)
 
 	if err := taskMgr.LoadTasksFromDB(); err != nil {
 		log.Printf("⚠️ 加载任务失败: %v", err)

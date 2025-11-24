@@ -2,5 +2,5 @@ package config
 
 var DBConnStr = "postgres://" +
 	"root" + ":" + "root" +
-	"@" + "localhost" + ":" + "5432" +
+	"@" + "localhost" + ":" + "15432" +
 	"/" + "postgres" + "?sslmode=disable"
