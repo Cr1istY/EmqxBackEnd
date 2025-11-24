@@ -4,20 +4,37 @@ import (
 	"EmqxBackEnd/models"
 	"EmqxBackEnd/repository"
 	"EmqxBackEnd/service"
+	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func ReceiveEmpx(c *gin.Context) {
-	var msg models.EmpxMessage
-	if err := c.ShouldBindJSON(&msg); err != nil {
+	var emqxMsg models.EMQXMessagePublish
+	if err := c.ShouldBindJSON(&emqxMsg); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Println(emqxMsg)
+	var rawMsg models.RawEmpxMessage
+	if err := json.Unmarshal([]byte(emqxMsg.Payload), &rawMsg); err != nil {
+		log.Println("Error unmarshalling payload:", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "payload 解析失败"})
+		return
+	}
+	log.Println(rawMsg)
+	var msg models.EmpxMessage
+	msg.Value = rawMsg.Value
+	msg.NodeID = rawMsg.NodeID
+	msg.Type = rawMsg.Type
+	msg.TS = time.Now()
 
 	if err := service.ProcessEmpxMessage(&msg); err != nil {
+		log.Println("Error saving message:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save"})
 		return
 	}
@@ -49,4 +66,9 @@ func GetMessages(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, messages)
+}
+
+func Empx(c *gin.Context) {
+	log.Println("Empx", c)
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }

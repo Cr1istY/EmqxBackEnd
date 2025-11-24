@@ -5,7 +5,6 @@ import (
 	"EmqxBackEnd/repository"
 	"fmt"
 	"log"
-	"time"
 )
 
 func ProcessEmpxMessage(msg *models.EmpxMessage) error {
@@ -14,7 +13,7 @@ func ProcessEmpxMessage(msg *models.EmpxMessage) error {
 		log.Println("未知的节点，请先注册该节点" + fmt.Sprint(msg.NodeID))
 		return err
 	}
-	msg.TS = time.Now()
+	// msg.TS = time.Now()
 	msg.UserId = UserId
 	return repository.SaveMessage(msg)
 }

@@ -12,6 +12,7 @@ func Setup() *gin.Engine {
 
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+	// r.POST("/empx", handlers.Empx)
 	r.POST("/empx/saveMessage", handlers.ReceiveEmpx)
 	r.POST("/admin/login", handlers.Login)
 	protected := r.Group("")
