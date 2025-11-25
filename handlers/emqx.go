@@ -103,8 +103,3 @@ func GetMessages(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, messages)
 }
-
-func Empx(c *gin.Context) {
-	log.Println("Empx", c)
-	c.JSON(http.StatusOK, gin.H{"status": "ok"})
-}
