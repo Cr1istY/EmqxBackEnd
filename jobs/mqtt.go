@@ -101,7 +101,7 @@ func PublishNodesMessage(ctx context.Context, params map[string]interface{}) err
 	for _, nodeId := range nodeIds {
 
 		// 将message中的node值替换为实际的nodeId
-		message := fmt.Sprintf("{\n  \"node\": \"%d\",\n  \"type\": \"3\"\n}", nodeId)
+		message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"7\"\n}", nodeId)
 
 		singleParams := map[string]interface{}{
 			"topic":    params["topic"],
