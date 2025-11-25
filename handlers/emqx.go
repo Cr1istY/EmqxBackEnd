@@ -73,8 +73,27 @@ func GetMessages(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid type parameter"})
 		return
 	}
-	messages, err := repository.GetMessages(int(messageTypeId), userId)
-	if err != nil {
+
+	var messages []models.EmpxMessage
+
+	if messageType == "3" || messageType == "4" {
+		var messages3 []models.EmpxMessage
+		messages3, err = repository.GetMessages(3, userId)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
+			return
+		}
+		var messages4 []models.EmpxMessage
+		messages4, err = repository.GetMessages(4, userId)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
+			return
+		}
+		messages = append(messages3, messages4...)
+	} else {
+		messages, err = repository.GetMessages(int(messageTypeId), userId)
+	}
+	if err == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
 		return
 	}
