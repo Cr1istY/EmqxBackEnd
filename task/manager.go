@@ -43,6 +43,12 @@ func (tm *Manager) RegisterTask(desc string, fn models.TaskFunc) {
 	switch {
 	case desc == "温度传感器数据":
 		name = "temp_sensor"
+	case desc == "获取气体ppm值":
+		name = "get_gas_ppm"
+	case desc == "获取空气湿度":
+		name = "get_gas_moisture"
+	case desc == "获取红外传感器数据":
+		name = "get_infrared_sensor"
 	default:
 		name = "unknown_task"
 	}
