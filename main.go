@@ -36,6 +36,7 @@ func main() {
 
 	taskMgr := task.NewManager(db)
 	taskMgr.RegisterTask("温度传感器数据", jobs.PublishNodesMessage)
+	taskMgr.RegisterTask("获取气体ppm值", jobs.GetPPM)
 
 	if err := taskMgr.LoadTasksFromDB(); err != nil {
 		log.Printf("⚠️ 加载任务失败: %v", err)
