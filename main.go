@@ -6,6 +6,7 @@ import (
 	"EmqxBackEnd/jobs"
 	"EmqxBackEnd/mqtt"
 	"EmqxBackEnd/router"
+	"EmqxBackEnd/state"
 	"EmqxBackEnd/task"
 	"context"
 	"database/sql"
@@ -33,6 +34,8 @@ func main() {
 	defer func(db *sql.DB) {
 		_ = db.Close()
 	}(db)
+
+	state.SetCache("ppm", 4)
 
 	taskMgr := task.NewManager(db)
 	taskMgr.RegisterTask("温度传感器数据", jobs.PublishNodesMessage)

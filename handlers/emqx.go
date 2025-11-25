@@ -4,6 +4,7 @@ import (
 	"EmqxBackEnd/models"
 	"EmqxBackEnd/repository"
 	"EmqxBackEnd/service"
+	"EmqxBackEnd/state"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -38,6 +39,22 @@ func ReceiveEmpx(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save"})
 		return
 	}
+
+	if msg.Type == 4 {
+		ppm, err := strconv.Atoi(msg.Value)
+		if err != nil {
+			log.Println("Error converting ppm to int:", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "ppm 解析失败"})
+			return
+		}
+		if ppm >= 2100 {
+			// 进入危险值
+			state.SetCache("ppm", 3) // 打开蜂鸣器
+		} else {
+			state.SetCache("ppm", 4) // 关闭蜂鸣器
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{"status": "saved"})
 }
 

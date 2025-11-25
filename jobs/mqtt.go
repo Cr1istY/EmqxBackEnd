@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"EmqxBackEnd/repository"
+	"EmqxBackEnd/state"
 	"context"
 	"fmt"
 	"log"
@@ -98,7 +99,7 @@ func MqttBatchPublishTask(ctx context.Context, params map[string]interface{}) er
 	return nil
 }
 
-// 构造包含nodesid的消息并发布
+// PublishNodesMessage 构造包含nodesid的消息并发布
 func PublishNodesMessage(ctx context.Context, params map[string]interface{}) error {
 	// 获取所有节点
 	nodeIds, err := getAllNodeId()
@@ -132,8 +133,9 @@ func GetPPM(ctx context.Context, params map[string]interface{}) error {
 	if err != nil {
 		return fmt.Errorf("获取节点失败: %w", err)
 	}
+	messageType := state.GetCache("ppm")
 	for _, nodeId := range nodeIds {
-		message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"4\"\n}", nodeId)
+		message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"%d\"\n}", nodeId, messageType)
 		singleParams := map[string]interface{}{
 			"topic":    params["topic"],
 			"message":  message,
