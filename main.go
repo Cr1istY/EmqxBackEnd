@@ -35,7 +35,7 @@ func main() {
 	}(db)
 
 	taskMgr := task.NewManager(db)
-	taskMgr.RegisterTask("temp_sensor", jobs.MqttPublishTask)
+	taskMgr.RegisterTask("温度传感器数据", jobs.MqttPublishTask)
 
 	if err := taskMgr.LoadTasksFromDB(); err != nil {
 		log.Printf("⚠️ 加载任务失败: %v", err)
