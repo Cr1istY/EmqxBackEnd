@@ -1,6 +1,7 @@
 package jobs
 
 import (
+	"EmqxBackEnd/repository"
 	"context"
 	"fmt"
 	"log"
@@ -81,4 +82,39 @@ func MqttBatchPublishTask(ctx context.Context, params map[string]interface{}) er
 	}
 
 	return nil
+}
+
+// 构造包含nodesid的消息并发布
+func PublishNodesMessage(ctx context.Context, params map[string]interface{}) error {
+	// 获取所有节点
+	nodes, err := repository.GetAllNode()
+	if err != nil {
+		return fmt.Errorf("获取节点失败: %w", err)
+	}
+
+	// 提取nodeid并构造消息
+	var nodeIds []int
+	for _, node := range nodes {
+		nodeIds = append(nodeIds, node.ID)
+	}
+
+	for _, nodeId := range nodeIds {
+
+		// 将message中的node值替换为实际的nodeId
+		message := fmt.Sprintf("{\n  \"node\": \"%d\",\n  \"type\": \"3\"\n}", nodeId)
+
+		singleParams := map[string]interface{}{
+			"topic":    params["topic"],
+			"message":  message,
+			"qos":      params["qos"],
+			"retained": params["retained"],
+		}
+		if err := MqttPublishTask(ctx, singleParams); err != nil {
+			log.Printf("批量发布失败[%d]: %v", nodeId, err)
+			continue
+		}
+	}
+
+	return nil
+
 }

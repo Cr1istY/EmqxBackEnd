@@ -83,3 +83,30 @@ func GetAllNodeByUserId(userId int) ([]models.Node, error) {
 	}
 	return nodes, nil
 }
+
+func GetAllNode() ([]models.Node, error) {
+	query := "select * from public.node"
+	rows, err := database.DB.Query(query)
+	if err != nil {
+		log.Println("GetAllNode error:", err)
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Println("Error closing rows in GetAllNode:", err)
+			return
+		}
+	}(rows)
+	var nodes []models.Node
+	for rows.Next() {
+		var node models.Node
+		err := rows.Scan(&node.ID, &node.UserId)
+		if err != nil {
+			log.Println("GetAllNode error:", err)
+			return nil, err
+		}
+		nodes = append(nodes, node)
+	}
+	return nodes, nil
+}
