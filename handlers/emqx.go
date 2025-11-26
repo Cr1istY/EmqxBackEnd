@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,18 +21,34 @@ func ReceiveEmpx(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println(emqxMsg)
+	// log.Println(emqxMsg)
 	var rawMsg models.RawEmpxMessage
 	if err := json.Unmarshal([]byte(emqxMsg.Payload), &rawMsg); err != nil {
 		log.Println("Error unmarshalling payload:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "payload 解析失败"})
 		return
 	}
-	log.Println(rawMsg)
+	// log.Println(rawMsg)
+
+	// 字符处理
+	realType, err := strconv.Atoi(rawMsg.Type)
+	if err != nil {
+		log.Println("转换失败:", err)
+		return
+	}
+
+	realValue := strings.TrimLeft(rawMsg.Value, "0")
+	// trimmedValue = "48"
+
+	// 处理全零的特殊情况
+	if realValue == "" {
+		realValue = "0"
+	}
+
 	var msg models.EmpxMessage
-	msg.Value = rawMsg.Value
+	msg.Value = realValue
 	msg.NodeID = rawMsg.NodeID
-	msg.Type = rawMsg.Type
+	msg.Type = realType
 	msg.TS = time.Now()
 
 	if err := service.ProcessEmpxMessage(&msg); err != nil {
@@ -93,7 +110,7 @@ func GetMessages(c *gin.Context) {
 	} else {
 		messages, err = repository.GetMessages(int(messageTypeId), userId)
 	}
-	if err == nil {
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
 		return
 	}
