@@ -1,12 +1,27 @@
 package jobs
 
 import (
+	"EmqxBackEnd/mqtt"
+	"EmqxBackEnd/repository"
+	"EmqxBackEnd/state"
 	"context"
 	"fmt"
 	"log"
-
-	"EmqxBackEnd/mqtt"
 )
+
+func getAllNodeId() ([]int, error) {
+	nodes, err := repository.GetAllNode()
+	if err != nil {
+		return nil, fmt.Errorf("获取节点失败: %w", err)
+	}
+
+	// 提取nodeid并构造消息
+	var nodeIds []int
+	for _, node := range nodes {
+		nodeIds = append(nodeIds, node.ID)
+	}
+	return nodeIds, nil
+}
 
 // MqttPublishTask MQTT消息发布任务
 func MqttPublishTask(ctx context.Context, params map[string]interface{}) error {
@@ -80,5 +95,98 @@ func MqttBatchPublishTask(ctx context.Context, params map[string]interface{}) er
 		}
 	}
 
+	return nil
+}
+
+// GetTem 构造包含nodesid的消息并发布
+func GetTem(ctx context.Context, params map[string]interface{}) error {
+	// 获取所有节点
+	nodeIds, err := getAllNodeId()
+	if err != nil {
+		return fmt.Errorf("获取节点失败: %w", err)
+	}
+
+	for _, nodeId := range nodeIds {
+
+		// 将message中的node值替换为实际的nodeId
+		message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"8\"\n}", nodeId)
+
+		singleParams := map[string]interface{}{
+			"topic":    params["topic"],
+			"message":  message,
+			"qos":      params["qos"],
+			"retained": params["retained"],
+		}
+		if err := MqttPublishTask(ctx, singleParams); err != nil {
+			log.Printf("批量发布失败[%d]: %v", nodeId, err)
+			continue
+		}
+	}
+
+	return nil
+
+}
+
+func GetPPM(ctx context.Context, params map[string]interface{}) error {
+	nodeIds, err := getAllNodeId()
+	if err != nil {
+		return fmt.Errorf("获取节点失败: %w", err)
+	}
+	messageType := state.GetCache("ppm")
+	for _, nodeId := range nodeIds {
+		message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"%d\"\n}", nodeId, messageType)
+		singleParams := map[string]interface{}{
+			"topic":    params["topic"],
+			"message":  message,
+			"qos":      params["qos"],
+			"retained": params["retained"],
+		}
+		if err := MqttPublishTask(ctx, singleParams); err != nil {
+			log.Printf("批量发布失败[%d]: %v", nodeId, err)
+			continue
+		}
+	}
+	return nil
+}
+
+func GetMoisture(ctx context.Context, params map[string]interface{}) error {
+	nodeIds, err := getAllNodeId()
+	if err != nil {
+		return fmt.Errorf("获取节点失败: %w", err)
+	}
+	for _, nodeId := range nodeIds {
+		message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"7\"\n}", nodeId)
+		singleParams := map[string]interface{}{
+			"topic":    params["topic"],
+			"message":  message,
+			"qos":      params["qos"],
+			"retained": params["retained"],
+		}
+		if err := MqttPublishTask(ctx, singleParams); err != nil {
+			log.Printf("批量发布失败[%d]: %v", nodeId, err)
+			continue
+		}
+	}
+	return nil
+}
+
+func GetInfrared(ctx context.Context, params map[string]interface{}) error {
+	nodeIds, err := getAllNodeId()
+	if err != nil {
+		return fmt.Errorf("获取节点失败: %w", err)
+	}
+	for _, nodeId := range nodeIds {
+		message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"6\"\n}", nodeId)
+		singleParams := map[string]interface{}{
+			"topic":    params["topic"],
+			"message":  message,
+			"qos":      params["qos"],
+			"retained": params["retained"],
+		}
+		if err := MqttPublishTask(ctx, singleParams); err != nil {
+			log.Printf("批量发布失败[%d]: %v", nodeId, err)
+			continue
+		}
+	}
 	return nil
 }

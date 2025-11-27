@@ -12,9 +12,9 @@ type EmpxMessage struct {
 
 type RawEmpxMessage struct {
 	NodeID int    `json:"nodeID" db:"node_id"`
-	Type   int    `json:"type" db:"type"`
+	Type   string `json:"type" db:"type"`
 	Value  string `json:"value" db:"message"`
-	TS     int    `json:"ts" db:"received_at"`
+	TS     int64  `json:"ts" db:"received_at"`
 	UserId int    `json:"userId" db:"user_id"`
 }
 

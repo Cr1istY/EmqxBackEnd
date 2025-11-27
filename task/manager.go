@@ -41,20 +41,14 @@ func (tm *Manager) RegisterTask(desc string, fn models.TaskFunc) {
 	// 使用函数名作为键（简单实现）
 	var name string
 	switch {
-	case desc == "MQTT发布":
-		name = "mqtt_publish"
-	case desc == "MQTT批量发布":
-		name = "mqtt_batch_publish"
-	case desc == "心跳检测":
-		name = "heartbeat"
-	case desc == "清理文件":
-		name = "cleanup"
-	case desc == "邮件发送":
-		name = "email_task"
-	case desc == "数据同步":
-		name = "sync_data"
-	case desc == "temp_sensor":
+	case desc == "温度传感器数据":
 		name = "temp_sensor"
+	case desc == "获取气体ppm值":
+		name = "get_gas_ppm"
+	case desc == "获取空气湿度":
+		name = "get_gas_moisture"
+	case desc == "获取红外传感器数据":
+		name = "get_infrared_sensor"
 	default:
 		name = "unknown_task"
 	}
