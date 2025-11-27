@@ -23,7 +23,12 @@ type GetMessage struct {
 	Type   int `json:"type" db:"type"`
 }
 
-// emqx 消息发布
+type QueryMessages struct {
+	UserId    int       `json:"userId" db:"user_id"`
+	Type      int       `json:"type" db:"type"`
+	StartTime time.Time `json:"start_time"`
+	EndTime   time.Time `json:"end_time"`
+}
 
 // EMQXMessagePublish 对应 EMQX 事件 "message.publish" 的完整 payload
 type EMQXMessagePublish struct {
