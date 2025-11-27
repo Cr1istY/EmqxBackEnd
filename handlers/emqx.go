@@ -91,24 +91,34 @@ func GetMessages(c *gin.Context) {
 		return
 	}
 
+	const timeLayout = "2006-01-02"
+
+	startTime := "2000-10-11"
+	endTime := "2199-01-10"
+
+	if c.Query("startTime") != "" && c.Query("endTime") != "" {
+		startTime = c.Query("startTime")
+		endTime = c.Query("endTime")
+	}
+
 	var messages []models.EmpxMessage
 
 	if messageType == "3" || messageType == "4" {
 		var messages3 []models.EmpxMessage
-		messages3, err = repository.GetMessages(3, userId)
+		messages3, err = repository.GetMessagesByDaily(3, userId, startTime, endTime)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
 			return
 		}
 		var messages4 []models.EmpxMessage
-		messages4, err = repository.GetMessages(4, userId)
+		messages4, err = repository.GetMessagesByDaily(4, userId, startTime, endTime)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
 			return
 		}
 		messages = append(messages3, messages4...)
 	} else {
-		messages, err = repository.GetMessages(int(messageTypeId), userId)
+		messages, err = repository.GetMessagesByDaily(int(messageTypeId), userId, startTime, endTime)
 	}
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
@@ -120,3 +130,59 @@ func GetMessages(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, messages)
 }
+
+//func GetMessagesByDaily(c *gin.Context) {
+//	// 取出当前用户的token，与用户的id的token进行对比
+//	token := c.GetHeader("Authorization")
+//	var queryMessage models.QueryMessages
+//	if err := c.ShouldBindJSON(&queryMessage); err != nil {
+//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+//	}
+//	userId, err := repository.GetUserIdByToken(token)
+//	if err != nil {
+//		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get token"})
+//		return
+//	}
+//
+//	if userId != queryMessage.UserId {
+//		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+//	}
+//
+//	messageType := queryMessage.Type
+//
+//	//messageTypeId, err := strconv.ParseInt(messageType, 10, 32)
+//	//if err != nil {
+//	//	// Handle conversion error
+//	//	c.JSON(http.StatusBadRequest, gin.H{"error": "invalid type parameter"})
+//	//	return
+//	//}
+//
+//	var messages []models.EmpxMessage
+//
+//	if messageType == 3 || messageType == 4 {
+//		var messages3 []models.EmpxMessage
+//		messages3, err = repository.GetMessagesByDaily(3, userId, queryMessage.StartTime, queryMessage.EndTime)
+//		if err != nil {
+//			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
+//			return
+//		}
+//		var messages4 []models.EmpxMessage
+//		messages4, err = repository.GetMessagesByDaily(4, userId, queryMessage.StartTime, queryMessage.EndTime)
+//		if err != nil {
+//			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
+//			return
+//		}
+//		messages = append(messages3, messages4...)
+//	} else {
+//		messages, err = repository.GetMessagesByDaily(messageType, userId, queryMessage.StartTime, queryMessage.EndTime)
+//	}
+//	if err != nil {
+//		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
+//		return
+//	}
+//	if len(messages) == 0 {
+//		c.JSON(http.StatusOK, gin.H{"messages": []models.EmpxMessage{}})
+//		return
+//	}
+//	c.JSON(http.StatusOK, messages)
+//}

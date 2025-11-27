@@ -21,13 +21,14 @@ func Setup() *gin.Engine {
 		protected.GET("/admin/getinfo", handlers.GetAdminByAuth)
 		// protected.GET("/empx/getNodeMessage", handlers.GetMessages)
 		protected.GET("/empx/getMessage/:type", handlers.GetMessages)
+		// protected.POST("/empx/getMessageByDaily", handlers.GetMessagesByDaily)
 		protected.POST("/admin/register", handlers.Register)
 		protected.POST("/admin/saveNode", handlers.SaveNode)
 		protected.POST("/admin/changeUserStatus", handlers.ChangeUserStatus)
 		protected.GET("/admin/getAllUser", handlers.GetAllUsers)
 		protected.GET("/admin/getAllNode", handlers.GetAllNodeByUserId)
 	}
-	taskGroup := r.Group("/api/tasks")
+	taskGroup := protected.Group("/task")
 	{
 		taskGroup.GET("", handlers.GetTasksHandler)                      // 获取任务列表
 		taskGroup.PUT("/:name/cron", handlers.UpdateTaskCronHandler)     // 更新Cron表达式

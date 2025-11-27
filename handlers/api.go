@@ -20,6 +20,10 @@ func SetTaskManager(tm *task.Manager) {
 
 // GetTasksHandler 获取所有定时任务列表
 func GetTasksHandler(c *gin.Context) {
+	if taskMgr == nil || taskMgr.Db == nil {
+		c.JSON(500, gin.H{"error": "Database not initialized"})
+		return
+	}
 	rows, err := taskMgr.Db.QueryContext(c,
 		"SELECT id, task_name, cron_expr, description, status, params, created_at, updated_at FROM cron_tasks ORDER BY id")
 	if err != nil {
