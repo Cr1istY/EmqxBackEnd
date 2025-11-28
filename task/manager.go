@@ -167,7 +167,6 @@ func (tm *Manager) AddTask(cfg models.TaskConfig) error {
 // UpdateTaskCron 更新任务的Cron表达式
 func (tm *Manager) UpdateTaskCron(name, newCron string) error {
 	tm.mutex.Lock()
-	defer tm.mutex.Unlock()
 
 	// 更新数据库
 	_, err := tm.Db.ExecContext(context.Background(),
@@ -190,7 +189,7 @@ func (tm *Manager) UpdateTaskCron(name, newCron string) error {
 		return fmt.Errorf("加载新配置失败: %w", err)
 	}
 	json.Unmarshal(paramsJSON, &cfg.Params)
-
+	tm.mutex.Unlock()
 	return tm.AddTask(cfg)
 }
 
