@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"EmqxBackEnd/jobs"
 	"EmqxBackEnd/models"
 	"EmqxBackEnd/repository"
 	"EmqxBackEnd/service"
 	"EmqxBackEnd/state"
+	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -66,7 +69,22 @@ func ReceiveEmpx(c *gin.Context) {
 		}
 		if ppm >= 2100 {
 			// 进入危险值
+			// 打开蜂鸣器
 			state.SetCache("ppm", 3) // 打开蜂鸣器
+			nodeId := msg.NodeID
+			messageType := state.GetCache("ppm")
+			message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"%d\"\n}", nodeId, messageType)
+			singleParams := map[string]interface{}{
+				"topic":    emqxMsg.Topic,
+				"message":  message,
+				"qos":      emqxMsg.QoS,
+				"retained": true,
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := jobs.MqttPublishTask(ctx, singleParams); err != nil {
+				log.Printf("发布失败[%d]: %v", nodeId, err)
+			}
 		} else {
 			state.SetCache("ppm", 4) // 关闭蜂鸣器
 		}
@@ -90,8 +108,6 @@ func GetMessages(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid type parameter"})
 		return
 	}
-
-	const timeLayout = "2006-01-02"
 
 	startTime := "2000-10-11"
 	endTime := "2199-01-10"
@@ -130,59 +146,3 @@ func GetMessages(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, messages)
 }
-
-//func GetMessagesByDaily(c *gin.Context) {
-//	// 取出当前用户的token，与用户的id的token进行对比
-//	token := c.GetHeader("Authorization")
-//	var queryMessage models.QueryMessages
-//	if err := c.ShouldBindJSON(&queryMessage); err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//	}
-//	userId, err := repository.GetUserIdByToken(token)
-//	if err != nil {
-//		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get token"})
-//		return
-//	}
-//
-//	if userId != queryMessage.UserId {
-//		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
-//	}
-//
-//	messageType := queryMessage.Type
-//
-//	//messageTypeId, err := strconv.ParseInt(messageType, 10, 32)
-//	//if err != nil {
-//	//	// Handle conversion error
-//	//	c.JSON(http.StatusBadRequest, gin.H{"error": "invalid type parameter"})
-//	//	return
-//	//}
-//
-//	var messages []models.EmpxMessage
-//
-//	if messageType == 3 || messageType == 4 {
-//		var messages3 []models.EmpxMessage
-//		messages3, err = repository.GetMessagesByDaily(3, userId, queryMessage.StartTime, queryMessage.EndTime)
-//		if err != nil {
-//			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
-//			return
-//		}
-//		var messages4 []models.EmpxMessage
-//		messages4, err = repository.GetMessagesByDaily(4, userId, queryMessage.StartTime, queryMessage.EndTime)
-//		if err != nil {
-//			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
-//			return
-//		}
-//		messages = append(messages3, messages4...)
-//	} else {
-//		messages, err = repository.GetMessagesByDaily(messageType, userId, queryMessage.StartTime, queryMessage.EndTime)
-//	}
-//	if err != nil {
-//		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
-//		return
-//	}
-//	if len(messages) == 0 {
-//		c.JSON(http.StatusOK, gin.H{"messages": []models.EmpxMessage{}})
-//		return
-//	}
-//	c.JSON(http.StatusOK, messages)
-//}
