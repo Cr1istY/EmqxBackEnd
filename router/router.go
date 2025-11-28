@@ -22,6 +22,7 @@ func Setup() *gin.Engine {
 		// protected.GET("/empx/getNodeMessage", handlers.GetMessages)
 		protected.GET("/empx/getMessage/:type", handlers.GetMessages)
 		// protected.POST("/empx/getMessageByDaily", handlers.GetMessagesByDaily)
+		protected.GET("empx/openTheDoor/:nodeId", handlers.OpenTheDoor)
 		protected.POST("/admin/register", handlers.Register)
 		protected.POST("/admin/saveNode", handlers.SaveNode)
 		protected.POST("/admin/changeUserStatus", handlers.ChangeUserStatus)

@@ -18,6 +18,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var globalEmqxMsg models.EMQXMessagePublish
+
 func ReceiveEmpx(c *gin.Context) {
 	var emqxMsg models.EMQXMessagePublish
 	if err := c.ShouldBindJSON(&emqxMsg); err != nil {
@@ -89,12 +91,11 @@ func ReceiveEmpx(c *gin.Context) {
 			state.SetCache("ppm", 4) // 关闭蜂鸣器
 		}
 	}
-
+	globalEmqxMsg = emqxMsg
 	c.JSON(http.StatusOK, gin.H{"status": "saved"})
 }
 
 func GetMessages(c *gin.Context) {
-	// 取出当前用户的token，与用户的id的token进行对比
 	token := c.GetHeader("Authorization")
 	messageType := c.Param("type")
 	userId, err := repository.GetUserIdByToken(token)
@@ -145,4 +146,42 @@ func GetMessages(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, messages)
+}
+
+func OpenTheDoor(c *gin.Context) {
+	nodeId := c.Param("nodeId")
+	message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"5\"\n}", nodeId)
+	singleParams := map[string]interface{}{
+		"topic":    globalEmqxMsg.Topic,
+		"message":  message,
+		"qos":      globalEmqxMsg.QoS,
+		"retained": true,
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := jobs.MqttPublishTask(ctx, singleParams); err != nil {
+		log.Printf("发布失败[%d]: %v", nodeId, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "开门"})
+}
+
+func CloseTheDoor(c *gin.Context) {
+	nodeId := c.Param("nodeId")
+	message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"6\"\n}", nodeId)
+	singleParams := map[string]interface{}{
+		"topic":    globalEmqxMsg.Topic,
+		"message":  message,
+		"qos":      globalEmqxMsg.QoS,
+		"retained": true,
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := jobs.MqttPublishTask(ctx, singleParams); err != nil {
+		log.Printf("发布失败[%d]: %v", nodeId, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "关门"})
 }
