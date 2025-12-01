@@ -6,7 +6,6 @@ import (
 	"EmqxBackEnd/jobs"
 	"EmqxBackEnd/mqtt"
 	"EmqxBackEnd/router"
-	"EmqxBackEnd/state"
 	"EmqxBackEnd/task"
 	"context"
 	"database/sql"
@@ -18,13 +17,13 @@ import (
 )
 
 func main() {
-	mqttBroker := "mqtt://172.20.10.5:1883"
-	mqttUser := ""
-	mqttPass := ""
-	if err := mqtt.InitClient(mqttBroker, "cron_task_client", mqttUser, mqttPass); err != nil {
-		log.Fatalf("MQTT初始化失败: %v", err)
-	}
-	defer mqtt.Close()
+	//mqttBroker := "mqtt://172.20.10.5:1883"
+	//mqttUser := ""
+	//mqttPass := ""
+	//if err := mqtt.InitClient(mqttBroker, "cron_task_client", mqttUser, mqttPass); err != nil {
+	//	log.Fatalf("MQTT初始化失败: %v", err)
+	//}
+	//defer mqtt.Close()
 
 	db, err := database.Init()
 	if err != nil {
@@ -34,9 +33,9 @@ func main() {
 	defer func(db *sql.DB) {
 		_ = db.Close()
 	}(db)
-
-	state.SetCache("ppm", 4)
-
+	//
+	//state.SetCache("ppm", 4)
+	//
 	taskMgr := task.NewManager(db)
 	taskMgr.RegisterTask("温度传感器数据", jobs.GetTem)
 	taskMgr.RegisterTask("获取气体ppm值", jobs.GetPPM)
@@ -67,7 +66,7 @@ func main() {
 		_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		// 停止定时任务
+		//停止定时任务
 		taskMgr.StopCron()
 
 		// 关闭数据库连接
