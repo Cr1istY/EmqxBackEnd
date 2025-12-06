@@ -44,9 +44,11 @@ func GetMessages(messageType, userId int) ([]models.EmpxMessage, error) {
 }
 
 func GetMessagesByDaily(messageType, userId int, startTime, endTime string) ([]models.EmpxMessage, error) {
-	query := `SELECT node_id, message, received_at FROM public.message
-              WHERE type = $1 AND user_id = $2 AND received_at >= $3 AND received_at <= $4
-              ORDER BY received_at`
+	query := `SELECT node_id, message, received_at 
+				FROM public.message
+				WHERE type = $1 AND user_id = $2 AND received_at >= $3 AND received_at <= $4
+				ORDER BY received_at DESC
+				LIMIT 20`
 	rows, err := database.DB.Query(query, messageType, userId, startTime, endTime)
 	if err != nil {
 		log.Printf("database.DB.Query() failed: %v", err)

@@ -3,13 +3,26 @@ package router
 import (
 	"EmqxBackEnd/handlers"
 	"EmqxBackEnd/middleware"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func Setup() *gin.Engine {
 	r := gin.Default()
 
+	corsConfig := cors.Config{
+		AllowAllOrigins:  false, // 生产环境必须设为false
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowCredentials: true,           // 允许携带Cookie
+		MaxAge:           12 * time.Hour, // 预检请求缓存时间
+	}
+
+	// 应用中间件
+	r.Use(cors.New(corsConfig))
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	// r.POST("/empx", handlers.Empx)
