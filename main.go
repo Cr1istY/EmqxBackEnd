@@ -39,9 +39,9 @@ func main() {
 
 	taskMgr := task.NewManager(db)
 	taskMgr.RegisterTask("温度传感器数据", jobs.GetTem)
-	//taskMgr.RegisterTask("获取气体ppm值", jobs.GetPPM)
-	//taskMgr.RegisterTask("获取空气湿度", jobs.GetMoisture)
-	//taskMgr.RegisterTask("获取红外传感器数据", jobs.GetInfrared)
+	taskMgr.RegisterTask("获取气体ppm值", jobs.GetPPM)
+	taskMgr.RegisterTask("获取空气湿度", jobs.GetMoisture)
+	taskMgr.RegisterTask("获取红外传感器数据", jobs.GetInfrared)
 
 	if err := taskMgr.LoadTasksFromDB(); err != nil {
 		log.Printf("⚠️ 加载任务失败: %v", err)
