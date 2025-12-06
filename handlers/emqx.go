@@ -149,14 +149,20 @@ func GetMessages(c *gin.Context) {
 }
 
 func OpenTheDoor(c *gin.Context) {
-	nodeId := c.Param("nodeId")
-	message := fmt.Sprintf("{\n  \"nodeId\": \"%s\",\n  \"type\": \"5\"\n}", nodeId)
+	nodeIdS := c.Param("nodeId")
+	nodeId, err := strconv.Atoi(nodeIdS)
+	if err != nil {
+		fmt.Println("转换失败:", err)
+		return
+	}
+
+	message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"5\"\n}", nodeId)
 	if globalEmqxMsg.Topic == "" {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get emqx message"})
 		return
 	}
 	singleParams := map[string]interface{}{
-		"topic":    globalEmqxMsg.Topic,
+		"topic":    "cmd/esp32",
 		"message":  message,
 		"qos":      globalEmqxMsg.QoS,
 		"retained": true,
@@ -164,7 +170,7 @@ func OpenTheDoor(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := jobs.MqttPublishTask(ctx, singleParams); err != nil {
-		log.Printf("发布失败[%s]: %v", nodeId, err)
+		log.Printf("发布失败[%d]: %v", nodeId, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
 		return
 	}
@@ -172,10 +178,15 @@ func OpenTheDoor(c *gin.Context) {
 }
 
 func CloseTheDoor(c *gin.Context) {
-	nodeId := c.Param("nodeId")
-	message := fmt.Sprintf("{\n  \"nodeId\": \"%s\",\n  \"type\": \"6\"\n}", nodeId)
+	nodeIdS := c.Param("nodeId")
+	nodeId, err := strconv.Atoi(nodeIdS)
+	if err != nil {
+		fmt.Println("转换失败:", err)
+		return
+	}
+	message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"6\"\n}", nodeId)
 	singleParams := map[string]interface{}{
-		"topic":    globalEmqxMsg.Topic,
+		"topic":    "cmd/esp32",
 		"message":  message,
 		"qos":      globalEmqxMsg.QoS,
 		"retained": true,
@@ -183,7 +194,7 @@ func CloseTheDoor(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := jobs.MqttPublishTask(ctx, singleParams); err != nil {
-		log.Printf("发布失败[%s]: %v", nodeId, err)
+		log.Printf("发布失败[%d]: %v", nodeId, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get messages"})
 		return
 	}

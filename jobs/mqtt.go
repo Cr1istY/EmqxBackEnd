@@ -176,7 +176,7 @@ func GetInfrared(ctx context.Context, params map[string]interface{}) error {
 		return fmt.Errorf("获取节点失败: %w", err)
 	}
 	for _, nodeId := range nodeIds {
-		message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"6\"\n}", nodeId)
+		message := fmt.Sprintf("{\n  \"nodeId\": \"%d\",\n  \"type\": \"9\"\n}", nodeId)
 		singleParams := map[string]interface{}{
 			"topic":    params["topic"],
 			"message":  message,
