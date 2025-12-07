@@ -47,7 +47,7 @@ func GetMessagesByDaily(messageType, userId int, startTime, endTime string) ([]m
 	query := `SELECT node_id, message, received_at 
 				FROM public.message
 				WHERE type = $1 AND user_id = $2 AND received_at >= $3 AND received_at <= $4
-				ORDER BY received_at DESC
+				ORDER BY received_at DESC 
 				LIMIT 20`
 	rows, err := database.DB.Query(query, messageType, userId, startTime, endTime)
 	if err != nil {
@@ -71,5 +71,12 @@ func GetMessagesByDaily(messageType, userId int, startTime, endTime string) ([]m
 		}
 		messages = append(messages, msg)
 	}
-	return messages, nil
+	// 按时间排序
+	var result []models.EmpxMessage
+	for i := len(messages) - 1; i >= 0; i-- {
+		result = append(result, messages[i])
+		// log.Println(messages[i].TS)
+	}
+
+	return result, nil
 }
