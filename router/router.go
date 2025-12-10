@@ -13,8 +13,11 @@ func Setup() *gin.Engine {
 	r := gin.Default()
 
 	corsConfig := cors.Config{
-		AllowAllOrigins:  false, // 生产环境必须设为false
-		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173"},
+		AllowAllOrigins: false, // 生产环境必须设为false
+		AllowOrigins: []string{
+			"http://localhost:3000",
+			"http://localhost:5173",
+			"http://172.20.10.5:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,           // 允许携带Cookie
